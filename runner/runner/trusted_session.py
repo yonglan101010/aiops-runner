@@ -1120,6 +1120,18 @@ def _process_start_fingerprint(pid: int | None) -> str | None:
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
 
+def _process_group_id(pid: int | None) -> int | None:
+    if sys.platform != "linux" or not pid:
+        return None
+    try:
+        return os.getpgid(pid)
+    except OSError:
+        # The child may exit between Popen returning and journal metadata being
+        # captured.  That race must not turn an otherwise valid run into a
+        # Trusted session failure.
+        return None
+
+
 def _orphan_identity_matches(metadata: Mapping[str, Any]) -> bool:
     if sys.platform != "linux":
         return False
@@ -1395,7 +1407,7 @@ class ClaudeSessionAdapter:
                     registered = True
                     if self.process_started is not None:
                         pid = getattr(process, "pid", None)
-                        pgid = os.getpgid(pid) if sys.platform == "linux" and pid else None
+                        pgid = _process_group_id(pid)
                         self.process_started(session_id, pid, pgid, _process_start_fingerprint(pid))
                 except Exception:
                     _signal_process_tree(process, force=True)

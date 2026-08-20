@@ -26,10 +26,22 @@ from runner.trusted_session import (
     TrustedSessionError,
     TrustedSessionOrchestrator,
     _minimal_child_env,
+    _process_group_id,
     command_fingerprint,
     config_fingerprint,
     redact_sensitive,
 )
+
+
+def test_process_group_id_tolerates_child_exit(monkeypatch):
+    monkeypatch.setattr(sys, "platform", "linux")
+
+    def missing_process(_pid):
+        raise ProcessLookupError
+
+    monkeypatch.setattr(os, "getpgid", missing_process, raising=False)
+
+    assert _process_group_id(12345) is None
 
 
 class InjectedLockBackend:
