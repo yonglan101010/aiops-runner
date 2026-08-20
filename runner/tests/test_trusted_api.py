@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import threading
 import time
 import uuid
@@ -10,6 +11,7 @@ import pytest
 
 from runner.callback import Sender
 from runner.config import RunnerConfig, TrustedSessionConfig, WebhookConfig
+from runner.instance_identity import init_identity
 from runner.server import Runner
 from runner.trusted_api import (
     TrustedCallbackClient, TrustedSessionController, _build_control_receipt,
@@ -783,21 +785,29 @@ def test_failed_callback_is_at_most_once_and_journal_remains_for_reconciliation(
 
 def test_runner_private_routes_use_existing_ingress_auth_and_disabled_fails_closed(tmp_path, monkeypatch):
     monkeypatch.setenv("RUNNER_SHARED_TOKEN", "runner-token")
+    trusted = TrustedSessionConfig(
+        runner_instance_id_file=str(tmp_path / "identity" / "runner-instance-id")
+    )
+    if sys.platform == "linux":
+        init_identity(trusted.runner_instance_id_file)
     cfg = RunnerConfig(
         webhook=WebhookConfig(shared_token_env="RUNNER_SHARED_TOKEN", ip_allowlist=("10.0.0.0/24",)),
-        deadletter_dir=str(tmp_path / "deadletter"), trusted_session=TrustedSessionConfig(),
+        deadletter_dir=str(tmp_path / "deadletter"), trusted_session=trusted,
     )
     runner = Runner(cfg)
-    code, result = runner.trusted_request(
-        client_ip="10.0.0.2", headers={}, method="POST",
-        path="/trusted-repair-sessions", body=create_body(str(uuid.uuid4())),
-    )
-    assert (code, result["error_code"]) == (401, "TRUSTED_REPAIR_AUTHENTICATION_REQUIRED")
-    code, result = runner.trusted_request(
-        client_ip="10.0.0.2", headers={"Authorization": "Bearer runner-token"}, method="POST",
-        path="/trusted-repair-sessions", body=create_body(str(uuid.uuid4())),
-    )
-    assert (code, result["error_code"]) == (503, "TRUSTED_REPAIR_FEATURE_DISABLED")
+    try:
+        code, result = runner.trusted_request(
+            client_ip="10.0.0.2", headers={}, method="POST",
+            path="/trusted-repair-sessions", body=create_body(str(uuid.uuid4())),
+        )
+        assert (code, result["error_code"]) == (401, "TRUSTED_REPAIR_AUTHENTICATION_REQUIRED")
+        code, result = runner.trusted_request(
+            client_ip="10.0.0.2", headers={"Authorization": "Bearer runner-token"}, method="POST",
+            path="/trusted-repair-sessions", body=create_body(str(uuid.uuid4())),
+        )
+        assert (code, result["error_code"]) == (503, "TRUSTED_REPAIR_FEATURE_DISABLED")
+    finally:
+        runner.close()
 
 
 def test_kill_switch_routes_require_ingress_and_shared_admin_credential(tmp_path, monkeypatch):
