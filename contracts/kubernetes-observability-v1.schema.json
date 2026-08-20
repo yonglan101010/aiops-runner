@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aiops.local/contracts/kubernetes-observability-v1.schema.json",
+  "title": "Runner Kubernetes observability envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol_version", "runner_instance_id", "runner_cluster_id", "cluster_uid", "generated_at", "truncated", "data", "content_fingerprint"],
+  "properties": {
+    "protocol_version": { "const": "kubernetes-observability/v1" },
+    "runner_instance_id": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "runner_cluster_id": { "type": "string", "minLength": 1, "maxLength": 253 },
+    "cluster_uid": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "truncated": { "type": "boolean" },
+    "data": { "type": "object" },
+    "content_fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

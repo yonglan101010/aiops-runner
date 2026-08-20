@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiops-runner"
+version = "0.1.0"
+description = "Trusted execution runner for AIOps inspections and human-approved repairs"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "cryptography>=42.0",
+    "PyYAML>=6.0",
+    "jsonschema>=4.0",
+    "paramiko>=3.4",
+    "kubernetes>=30.1,<34",
+    "volcengine>=1.0.190",
+    "volcengine-python-sdk>=4.0.43,<6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+aiops-runner = "runner.server:main"
+
+[project.urls]
+Homepage = "https://github.com/yonglan101010/aiops-runner"
+Documentation = "https://github.com/yonglan101010/aiops-runner#readme"
+Issues = "https://github.com/yonglan101010/aiops-runner/issues"
+Source = "https://github.com/yonglan101010/aiops-runner"
+
+[tool.setuptools]
+packages = ["runner"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,59 @@
+backend: claude-code-headless
+webhook:
+  listen: 0.0.0.0:8002
+  shared_token_env: RUNNER_SHARED_TOKEN
+  hmac_secret_env: null
+  ip_allowlist:
+  - 127.0.0.0/8
+  - 10.0.0.0/8
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+token_budget_per_hour: 200000
+dedup_window_sec: 300
+rate_limit_per_min: 60
+deadletter_dir: state/deadletter
+trusted_session:
+  # Safe public default. The configuration wizard enables this only after
+  # callback, identity and local encrypted storage checks succeed.
+  enabled: false
+  inventory_dir: config
+  project_dir: agent-project-trusted
+  journal_dir: state/trusted-sessions
+  transcript_dir: state/trusted-transcripts
+  session_store_dir: state/trusted-claude-config
+  runner_instance_id_file: state/runner-instance-id
+  runner_config_version: v1
+  token_env: RUNNER_TRUSTED_AIOPS_CALLBACK_TOKEN
+  admin_token_env: RUNNER_SHARED_TOKEN
+  approval_ttl_sec: 1800
+  execution_ttl_sec: 1800
+  risk_ttl_sec: 600
+  transcript_retention_days: 30
+  encryption_key_env: ''
+  encryption_key_file: state/trusted-transcript.key
+  encryption_key_id: v1
+
+trusted_inspection:
+  # Enabled by the configuration wizard after a valid AIOps callback is set.
+  enabled: false
+  journal_dir: state/trusted-inspections
+  diagnosis_timeout_sec: 300
+  diagnosis_command_budget: 20
+  retention_days: 30
+
+# Read-only VKE/Kubernetes collection. The wizard writes only local inventory
+# and credentials; this feature remains off until explicitly enabled.
+kubernetes:
+  enabled: false
+  inventory_file: config/kubernetes.local.yaml
+  state_dir: state/kubernetes
+  current_metrics_cache_sec: 15
+  sync_timeout_sec: 300
+  inspection_report_version: v1
+  continuous_collection_enabled: false
+  collection_interval_sec: 15
+  collection_memory_limit_mb: 128
+  log_collection_concurrency: 16
+  log_all_namespaces: false
+  log_request_timeout_sec: 10
+  reconcile_interval_sec: 21600

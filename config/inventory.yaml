@@ -1,0 +1,17 @@
+# 资产清单样例；运行时会执行完整 Schema 校验与 logical_target 解析。
+hosts:
+  - id: test-1
+    addr: 192.168.0.1
+    env: test
+    allow_agent_read: true
+    logical_target_ids: ["test-cluster"]
+  - id: test-2
+    addr: 192.168.0.2
+    env: test
+    allow_agent_read: true
+    logical_target_ids: ["test-cluster"]
+  - id: test-3
+    addr: 192.168.0.3
+    env: test
+    allow_agent_read: true
+    logical_target_ids: ["test-3"]

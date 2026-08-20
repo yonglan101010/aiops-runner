@@ -1,0 +1,24 @@
+{
+  "protocol_version": "kubernetes-observability/v1",
+  "runner_instance_id": "6f79593f-3c7c-4da5-ac64-f37859562630",
+  "runner_cluster_id": "vke-prod",
+  "cluster_uid": "cluster-uid-example",
+  "generated_at": "2026-08-10T00:00:00Z",
+  "truncated": false,
+  "data": {
+    "epoch": "collector-epoch-example",
+    "status": {
+      "streams": {
+        "resources": {"last_success_at": "2026-08-10T00:00:00Z", "queue_bytes": 0, "dropped": 0},
+        "events": {"last_success_at": "2026-08-10T00:00:00Z", "queue_bytes": 0, "dropped": 0},
+        "logs": {"last_success_at": "2026-08-10T00:00:00Z", "queue_bytes": 0, "dropped": 0}
+      }
+    },
+    "streams": {
+      "resources": {"items": [], "next_sequence": 0, "oldest_sequence": 1, "gap": false, "dropped": 0, "queue_bytes": 0},
+      "events": {"items": [], "next_sequence": 0, "oldest_sequence": 1, "gap": false, "dropped": 0, "queue_bytes": 0},
+      "logs": {"items": [], "next_sequence": 0, "oldest_sequence": 1, "gap": false, "dropped": 0, "queue_bytes": 0}
+    }
+  },
+  "content_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

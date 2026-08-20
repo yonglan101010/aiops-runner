@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aiops.local/contracts/kubernetes-inspection-v2.schema.json",
+  "title": "Kubernetes inspection report v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target_type", "overall_status", "completion_status", "summary", "repair_supported", "scope", "checked_assets", "snapshot", "coverage", "findings", "interpretation"],
+  "properties": {
+    "schema_version": {"const": "kubernetes-inspection/v2"},
+    "target_type": {"const": "KUBERNETES_CLUSTER"},
+    "overall_status": {"enum": ["HEALTHY", "WARNING", "CRITICAL", "UNKNOWN"]},
+    "completion_status": {"enum": ["COMPLETE", "PARTIAL"]},
+    "summary": {"type": "string", "minLength": 1, "maxLength": 1200},
+    "repair_supported": {"const": false},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["namespaces"],
+      "properties": {"namespaces": {"type": "array", "maxItems": 100, "items": {"type": "string", "minLength": 1, "maxLength": 253}}}
+    },
+    "checked_assets": {"type": "integer", "minimum": 0},
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generated_at", "rule_set_version", "event_window_seconds", "transient_grace_seconds", "truncated", "finding_count"],
+      "properties": {
+        "generated_at": {"type": "string", "maxLength": 64},
+        "rule_set_version": {"type": "string", "maxLength": 128},
+        "event_window_seconds": {"type": "integer", "minimum": 1, "maximum": 86400},
+        "transient_grace_seconds": {"type": "integer", "minimum": 0, "maximum": 3600},
+        "truncated": {"type": "boolean"},
+        "finding_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "coverage": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["domain", "status", "checked_count", "failure_codes", "issue_count"],
+        "properties": {
+          "domain": {"type": "string", "maxLength": 64},
+          "status": {"enum": ["COMPLETE", "PARTIAL", "UNAVAILABLE"]},
+          "checked_count": {"type": "integer", "minimum": 0},
+          "failure_codes": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 128}},
+          "issue_count": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "interpretation": {"$ref": "#/$defs/interpretation"}
+  },
+  "$defs": {
+    "object_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "namespace", "name", "uid"],
+      "properties": {
+        "kind": {"type": "string", "minLength": 1, "maxLength": 64},
+        "namespace": {"type": ["string", "null"], "minLength": 1, "maxLength": 253},
+        "name": {"type": "string", "minLength": 1, "maxLength": 253},
+        "uid": {"type": ["string", "null"], "minLength": 1, "maxLength": 128}
+      }
+    },
+    "evidence_value": {
+      "oneOf": [
+        {"type": "string", "maxLength": 500},
+        {"type": "number"},
+        {"type": "boolean"},
+        {"type": "null"},
+        {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 128}}
+      ]
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "rule_id", "category", "severity", "classification", "area", "title", "root_object_ref", "affected_object_count", "affected_object_refs", "evidence", "impact_scope", "recommendation"],
+      "properties": {
+        "finding_id": {"type": "string", "minLength": 1, "maxLength": 64},
+        "rule_id": {"type": "string", "minLength": 1, "maxLength": 128},
+        "category": {"type": "string", "minLength": 1, "maxLength": 64},
+        "severity": {"enum": ["WARNING", "CRITICAL", "UNKNOWN"]},
+        "classification": {"enum": ["CURRENT_IMPACT", "RECENT_HISTORY", "EVIDENCE_GAP"]},
+        "area": {"enum": ["BUSINESS", "PLATFORM"]},
+        "title": {"type": "string", "minLength": 1, "maxLength": 500},
+        "root_object_ref": {"$ref": "#/$defs/object_ref"},
+        "affected_object_count": {"type": "integer", "minimum": 1},
+        "affected_object_refs": {"type": "array", "maxItems": 10, "items": {"$ref": "#/$defs/object_ref"}},
+        "evidence": {"type": "object", "maxProperties": 32, "additionalProperties": {"$ref": "#/$defs/evidence_value"}},
+        "impact_scope": {"type": "string", "maxLength": 253},
+        "recommendation": {"type": "string", "minLength": 1, "maxLength": 1200}
+      }
+    },
+    "priority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "explanation", "impact", "recommendation"],
+      "properties": {
+        "finding_id": {"type": "string", "maxLength": 64},
+        "explanation": {"type": "string", "maxLength": 1200},
+        "impact": {"type": "string", "maxLength": 800},
+        "recommendation": {"type": "string", "maxLength": 1200}
+      }
+    },
+    "interpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "priorities", "limitations"],
+      "properties": {
+        "status": {"enum": ["PENDING", "AVAILABLE", "UNAVAILABLE"]},
+        "failure_code": {"enum": ["MODEL_AUTHENTICATION_FAILED", "MODEL_RATE_LIMITED", "MODEL_QUOTA_EXHAUSTED", "MODEL_PROVIDER_UNAVAILABLE", "MODEL_CONNECTION_FAILED", "INSPECTION_CONFIGURATION_INVALID", "TARGET_CONNECTION_FAILED", "INSPECTION_TIMEOUT", "INSPECTION_COMMAND_BUDGET_EXHAUSTED", "INSPECTION_OUTPUT_INVALID", "RUNNER_RESTARTED_DURING_INSPECTION", "INSPECTION_FAILED"]},
+        "failure_http_status": {"type": "integer", "minimum": 100, "maximum": 599},
+        "executive_summary": {"type": "string", "maxLength": 1200},
+        "priorities": {"type": "array", "maxItems": 3, "items": {"$ref": "#/$defs/priority"}},
+        "limitations": {"type": "array", "maxItems": 10, "items": {"type": "string", "maxLength": 500}}
+      }
+    }
+  }
+}

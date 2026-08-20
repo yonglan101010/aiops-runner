@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aiops/trusted-alert-schema",
+  "title": "AIOps to Trusted Runner Alert Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "alert_id", "tenant_id", "logical_target_id", "category", "severity", "service", "timestamp", "summary", "labels", "annotations", "incident"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "alert_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "logical_target_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "category": {"type": "string", "enum": ["cpu_high", "mem_high", "disk_full", "service_down", "http_5xx", "other"]},
+    "severity": {"type": "string"},
+    "service": {"type": "string"},
+    "timestamp": {"type": "string"},
+    "summary": {"type": "string", "maxLength": 2048},
+    "labels": {"type": "object"},
+    "annotations": {"type": "object"},
+    "incident": {"type": ["object", "null"]}
+  }
+}

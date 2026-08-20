@@ -1,0 +1,22 @@
+# Copy to /etc/systemd/system/aiops-trusted-runner.service, then adjust User,
+# Group, WorkingDirectory, and ExecStart if the Runner is not installed at
+# /opt/aiops-runner or does not run as the claude account.
+[Unit]
+Description=AIOps Trusted Runner
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=claude
+Group=claude
+WorkingDirectory=/opt/aiops-runner
+EnvironmentFile=/opt/aiops-runner/.env
+ExecStart=/opt/aiops-runner/scripts/start-runner.sh
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

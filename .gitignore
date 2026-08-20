@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+.venv/
+venv/
+
+# 密钥与本地配置（模板 *.example 保留入库）
+.env
+.env.ps1
+.env.local
+.env.*.local
+config/keys/
+config/*.local.yaml
+config/local.yaml
+config/local.yaml.migrated.*.bak
+.configure-tmp-*/
+
+# 运行时状态/日志
+state/
+*.log
+
+# 系统文件
+.DS_Store
+*.swp
+*.swo

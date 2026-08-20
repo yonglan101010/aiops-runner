@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "$comment": "trusted_claude_session 专用项目；PreToolUse 把本地工具面收敛到 trusted Skill 和单参数 ./bin/target-exec。",
+  "permissions": {
+    "defaultMode": "dontAsk",
+    "allow": [
+      "Skill(trusted-repair-session)",
+      "Skill(trusted-inspection-session)",
+      "Skill(host-context-initialization)"
+    ],
+    "deny": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Cd",
+      "Edit",
+      "MultiEdit",
+      "Write",
+      "PowerShell",
+      "WebFetch",
+      "WebSearch",
+      "Agent",
+      "LSP",
+      "Monitor",
+      "KillShell",
+      "NotebookEdit",
+      "ExitPlanMode",
+      "TaskCreate",
+      "TaskGet",
+      "TaskList",
+      "TaskOutput",
+      "TaskStop",
+      "TaskUpdate",
+      "TodoWrite",
+      "ToolSearch",
+      "mcp__*"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"${CLAUDE_PROJECT_DIR}/bin/trusted_tool_hook.py\" || { printf '%s\\n' 'trusted tool policy unavailable' >&2; exit 2; }",
+            "timeout": 5,
+            "statusMessage": "Validating trusted-session tool boundary"
+          }
+        ]
+      }
+    ]
+  }
+}

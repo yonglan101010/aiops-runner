@@ -1,0 +1,831 @@
+{
+  "schema_version": "1.0",
+  "proposal_hash_algorithm_id": "aiops-trusted-repair-proposalhash-v1",
+  "control_intent_hash_algorithm_id": "aiops-trusted-repair-control-intent-hash-v1",
+  "valid_wire_objects": {
+    "repair_proposal": {
+      "kind": "repair_proposal",
+      "schema_version": "1.0",
+      "proposal_revision": 1,
+      "proposal_hash_algorithm_id": "aiops-trusted-repair-proposalhash-v1",
+      "proposal_hash": "sha256:e6df3f875402f9316c16c0852bf13d54f3f1548699da09a684b0cf805b851936",
+      "diagnosis_summary": "根分区使用率超过阈值",
+      "root_cause": "/root/test.txt 占用 80GB",
+      "evidence": [
+        {
+          "summary": "df 显示 / 使用率 97%",
+          "source": "command",
+          "observed_at": "2026-07-22T08:00:00Z",
+          "reference": "df -P /"
+        }
+      ],
+      "confidence": "0.95",
+      "target": {
+        "runner_provider_id": "11111111-1111-4111-8111-111111111111",
+        "logical_target_id": "test-3",
+        "platform": "linux"
+      },
+      "initial_commands": [
+        {
+          "sequence": 1,
+          "command": "stat -- /root/test.txt",
+          "cwd": "/",
+          "reason": "执行前确认文件状态",
+          "expected_result": "文件存在且大小与诊断一致",
+          "expected_impact": "只读",
+          "timeout_seconds": 30,
+          "high_risk": false,
+          "on_failure": "stop_and_reassess"
+        }
+      ],
+      "expected_impact": "释放磁盘空间",
+      "affected_scope": "test-3 根分区",
+      "rollback_instructions": "若文件需要保留，从备份恢复",
+      "verification_steps": [
+        {
+          "sequence": 1,
+          "command": "df -P /",
+          "success_criteria": "根分区使用率低于 80%",
+          "timeout_seconds": 30
+        }
+      ],
+      "risk_summary": "后续删除动作属于高风险，执行前需二次确认"
+    },
+    "repair_session": {
+      "kind": "repair_session",
+      "schema_version": "1.0",
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "claude_session_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "tenant_id": "aiops",
+      "run_id": "33333333-3333-4333-8333-333333333333",
+      "repair_id": null,
+      "runner_provider_id": "11111111-1111-4111-8111-111111111111",
+      "logical_target_id": "test-3",
+      "status": "PENDING_APPROVAL",
+      "proposal_revision": 1,
+      "proposal_hash_algorithm_id": "aiops-trusted-repair-proposalhash-v1",
+      "proposal_hash": "sha256:e6df3f875402f9316c16c0852bf13d54f3f1548699da09a684b0cf805b851936",
+      "created_at": "2026-07-22T08:00:00Z",
+      "expires_at": "2026-07-22T08:30:00Z"
+    },
+    "execution_event_batch": {
+      "kind": "execution_event_batch",
+      "schema_version": "1.0",
+      "tenant_id": "aiops",
+      "run_id": "33333333-3333-4333-8333-333333333333",
+      "repair_id": null,
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "runner_provider_id": "11111111-1111-4111-8111-111111111111",
+      "runner_instance_id": "55555555-5555-4555-8555-555555555555",
+      "first_sequence": 1,
+      "last_sequence": 3,
+      "events": [
+        {
+          "event_id": "44444444-4444-4444-8444-444444444441",
+          "session_id": "22222222-2222-4222-8222-222222222222",
+          "event_sequence": 1,
+          "event_type": "session_created",
+          "event_fingerprint": "sha256:7fe1dfb5c238d2f75471a7622cda79e2e44f6d7ede2a7290c07cf8fb9cd2cb3c",
+          "occurred_at": "2026-07-22T08:01:00Z",
+          "actor": { "type": "runner", "id": "runner-1" }
+        },
+        {
+          "event_id": "44444444-4444-4444-8444-444444444442",
+          "session_id": "22222222-2222-4222-8222-222222222222",
+          "event_sequence": 2,
+          "event_type": "diagnosis_started",
+          "event_fingerprint": "sha256:493fedd8f2b34ca0d16e329fe873a9bb5a55f7f0e58b3d293848cbca23a5d086",
+          "occurred_at": "2026-07-22T08:02:00Z",
+          "actor": { "type": "runner", "id": "runner-1" }
+        },
+        {
+          "event_id": "44444444-4444-4444-8444-444444444443",
+          "session_id": "22222222-2222-4222-8222-222222222222",
+          "event_sequence": 3,
+          "event_type": "tool_started",
+          "event_fingerprint": "sha256:3318637887ad89d984cf7d57f26778a10c4bda6aa242e5cc2701d02480789f40",
+          "occurred_at": "2026-07-22T08:03:00Z",
+          "actor": { "type": "runner", "id": "runner-1" }
+        }
+      ]
+    },
+    "approval_request": {
+      "kind": "approval_request",
+      "schema_version": "1.0",
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "proposal_revision": 1,
+      "proposal_hash_algorithm_id": "aiops-trusted-repair-proposalhash-v1",
+      "proposal_hash": "sha256:e6df3f875402f9316c16c0852bf13d54f3f1548699da09a684b0cf805b851936",
+      "idempotency_key": "55555555-5555-4555-8555-555555555555"
+    },
+    "risk_decision_request": {
+      "kind": "risk_decision_request",
+      "schema_version": "1.0",
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "risk_confirmation_id": "66666666-6666-4666-8666-666666666666",
+      "reason": "已核对影响范围",
+      "idempotency_key": "77777777-7777-4777-8777-777777777777"
+    },
+    "control_intent": {
+      "kind": "control_intent",
+      "schema_version": "1.0",
+      "command_id": "77777777-7777-4777-8777-777777777777",
+      "tenant_id": "aiops",
+      "run_id": "33333333-3333-4333-8333-333333333333",
+      "repair_id": null,
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "runner_provider_id": "11111111-1111-4111-8111-111111111111",
+      "runner_instance_id": "99999999-9999-4999-8999-999999999999",
+      "logical_target_id": "test-3",
+      "platform": "linux",
+      "action": "STOP_ACTIVE_SESSION",
+      "desired_terminal": "CANCELLED",
+      "reason_code": "USER_REQUESTED",
+      "requested_at": "2026-07-22T08:00:00Z",
+      "expires_at": "2026-07-22T08:10:00Z",
+      "intent_hash_algorithm_id": "aiops-trusted-repair-control-intent-hash-v1",
+      "intent_hash": "sha256:f0728eac4b7ffc77fa438cd03d19c55162b76ee319c8ab3e3612d2f51eba11fb"
+    },
+    "control_receipt": {
+      "kind": "control_receipt",
+      "schema_version": "1.0",
+      "receipt_id": "88888888-8888-4888-8888-888888888888",
+      "command_id": "77777777-7777-4777-8777-777777777777",
+      "tenant_id": "aiops",
+      "run_id": "33333333-3333-4333-8333-333333333333",
+      "repair_id": null,
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "runner_provider_id": "11111111-1111-4111-8111-111111111111",
+      "runner_instance_id": "99999999-9999-4999-8999-999999999999",
+      "logical_target_id": "test-3",
+      "platform": "linux",
+      "intent_hash_algorithm_id": "aiops-trusted-repair-control-intent-hash-v1",
+      "intent_hash": "sha256:f0728eac4b7ffc77fa438cd03d19c55162b76ee319c8ab3e3612d2f51eba11fb",
+      "outcome": "STOPPED_CONFIRMED",
+      "reason_code": "CONTROL_APPLIED",
+      "command_result_certain": true,
+      "prior_outcome": null,
+      "prior_command_result_certain": null,
+      "observed_at": "2026-07-22T08:01:00Z",
+      "receipt_fingerprint": "sha256:4369fe74959f59fee20e6d85b1b4cd7f04d37ff5fe25c19d70f132f46e720467"
+    },
+    "trusted_repair_proposal_callback": {
+      "kind": "trusted_repair_proposal_callback",
+      "schema_version": "1.0",
+      "tenant_id": "aiops",
+      "run_id": "33333333-3333-4333-8333-333333333333",
+      "repair_id": null,
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "runner_provider_id": "11111111-1111-4111-8111-111111111111",
+      "runner_instance_id": "55555555-5555-4555-8555-555555555555",
+      "proposal": {
+        "kind": "repair_proposal",
+        "schema_version": "1.0",
+        "proposal_revision": 1,
+        "proposal_hash_algorithm_id": "aiops-trusted-repair-proposalhash-v1",
+        "proposal_hash": "sha256:e6df3f875402f9316c16c0852bf13d54f3f1548699da09a684b0cf805b851936",
+        "diagnosis_summary": "根分区使用率超过阈值",
+        "root_cause": "/root/test.txt 占用 80GB",
+        "evidence": [{ "summary": "df 显示 / 使用率 97%", "source": "command", "observed_at": "2026-07-22T08:00:00Z", "reference": "df -P /" }],
+        "confidence": "0.95",
+        "target": { "runner_provider_id": "11111111-1111-4111-8111-111111111111", "logical_target_id": "test-3", "platform": "linux" },
+        "initial_commands": [{ "sequence": 1, "command": "stat -- /root/test.txt", "cwd": "/", "reason": "执行前确认文件状态", "expected_result": "文件存在且大小与诊断一致", "expected_impact": "只读", "timeout_seconds": 30, "high_risk": false, "on_failure": "stop_and_reassess" }],
+        "expected_impact": "释放磁盘空间",
+        "affected_scope": "test-3 根分区",
+        "rollback_instructions": "若文件需要保留，从备份恢复",
+        "verification_steps": [{ "sequence": 1, "command": "df -P /", "success_criteria": "根分区使用率低于 80%", "timeout_seconds": 30 }],
+        "risk_summary": "后续删除动作属于高风险，执行前需二次确认"
+      }
+    },
+    "terminal_callback": {
+      "kind": "terminal_callback",
+      "schema_version": "1.0",
+      "tenant_id": "aiops",
+      "run_id": "33333333-3333-4333-8333-333333333333",
+      "repair_id": null,
+      "session_id": "22222222-2222-4222-8222-222222222222",
+      "runner_provider_id": "11111111-1111-4111-8111-111111111111",
+      "runner_instance_id": "55555555-5555-4555-8555-555555555555",
+      "status": "SUCCEEDED",
+      "terminal_reason": "验证通过",
+      "last_event_sequence": 3,
+      "finished_at": "2026-07-22T08:20:00Z"
+    }
+  },
+  "expected_proposal_hash": "sha256:e6df3f875402f9316c16c0852bf13d54f3f1548699da09a684b0cf805b851936",
+  "expected_control_intent_hash": "sha256:f0728eac4b7ffc77fa438cd03d19c55162b76ee319c8ab3e3612d2f51eba11fb",
+  "valid_repair_session_semantics": [
+    {
+      "id": "preparing_allows_null_bindings",
+      "changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false
+    },
+    {
+      "id": "runner_acceptance_atomically_binds_before_diagnosis",
+      "previous_changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "DIAGNOSING",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false
+    },
+    {
+      "id": "definitive_dispatch_failure_is_unbound_terminal",
+      "previous_changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "DISPATCH_FAILED",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false
+    },
+    {
+      "id": "predispatch_cancel_is_unbound_terminal",
+      "previous_changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "CANCELLED",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false
+    },
+    {
+      "id": "uncertain_dispatch_is_unbound_manual_intervention",
+      "previous_changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "MANUAL_INTERVENTION",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false
+    },
+    {
+      "id": "late_callback_only_fills_uncertain_dispatch_binding",
+      "previous_changes": {
+        "status": "MANUAL_INTERVENTION",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "MANUAL_INTERVENTION",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true
+    },
+    {
+      "id": "diagnosis_only_retains_runner_claude_binding",
+      "changes": {
+        "status": "DIAGNOSIS_ONLY",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true
+    },
+    {
+      "id": "diagnosis_failed_retains_runner_claude_binding",
+      "changes": {
+        "status": "DIAGNOSIS_FAILED",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true
+    }
+  ],
+  "invalid_repair_session_semantics": [
+    {
+      "id": "preparing_rejects_early_claude_binding",
+      "changes": {
+        "status": "PREPARING",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "runner_acceptance_requires_atomic_claude_binding",
+      "previous_changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "DIAGNOSING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "runner_event_requires_claude_binding",
+      "changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "diagnosing_rejects_null_claude_binding",
+      "changes": {
+        "status": "DIAGNOSING",
+        "claude_session_id": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "unbound_dispatch_failed_requires_preparing_previous",
+      "changes": {
+        "status": "DISPATCH_FAILED",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "dispatch_failed_rejects_claude_binding",
+      "previous_changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "DISPATCH_FAILED",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "preparing_cancel_cannot_establish_claude_binding",
+      "previous_changes": {
+        "status": "PREPARING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "CANCELLED",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "unbound_manual_intervention_cannot_resume_into_diagnosing",
+      "previous_changes": {
+        "status": "MANUAL_INTERVENTION",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "DIAGNOSING",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "unbound_manual_intervention_cannot_jump_to_success",
+      "previous_changes": {
+        "status": "MANUAL_INTERVENTION",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "SUCCEEDED"
+      },
+      "runner_event_received": true,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "late_manual_intervention_binding_requires_runner_callback",
+      "previous_changes": {
+        "status": "MANUAL_INTERVENTION",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "MANUAL_INTERVENTION",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "unbound_cancelled_terminal_cannot_be_filled_later",
+      "previous_changes": {
+        "status": "CANCELLED",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "CANCELLED",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "unbound_dispatch_failed_terminal_cannot_be_filled_later",
+      "previous_changes": {
+        "status": "DISPATCH_FAILED",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "DISPATCH_FAILED",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "unbound_manual_intervention_requires_preparing_previous",
+      "changes": {
+        "status": "MANUAL_INTERVENTION",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "diagnosis_failed_rejects_cleared_claude_binding",
+      "previous_changes": {
+        "status": "DIAGNOSING",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "DIAGNOSIS_FAILED",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "proposal_binding_must_be_all_or_none",
+      "changes": {
+        "proposal_hash_algorithm_id": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "preparing_cannot_have_proposal_binding",
+      "changes": {
+        "status": "PREPARING",
+        "claude_session_id": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "bound_diagnosing_cannot_clear_claude_binding",
+      "previous_changes": {
+        "status": "DIAGNOSING",
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "changes": {
+        "status": "DIAGNOSING",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "diagnosis_failed_cannot_clear_bound_claude_session",
+      "previous_changes": {},
+      "changes": {
+        "status": "DIAGNOSIS_FAILED",
+        "claude_session_id": null,
+        "proposal_revision": null,
+        "proposal_hash_algorithm_id": null,
+        "proposal_hash": null
+      },
+      "runner_event_received": true,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    },
+    {
+      "id": "claude_binding_cannot_change",
+      "previous_changes": {},
+      "changes": {
+        "claude_session_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
+      },
+      "runner_event_received": false,
+      "error_code": "TRUSTED_REPAIR_BINDING_MISMATCH"
+    }
+  ],
+  "invalid_wire_mutations": [
+    {
+      "id": "proposal_nested_unknown_rejected",
+      "object": "repair_proposal",
+      "path": ["evidence", 0, "unexpected"],
+      "value": "not hashed",
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "proposal_nested_float_rejected",
+      "object": "repair_proposal",
+      "path": ["initial_commands", 0, "timeout_seconds"],
+      "value": 30.5,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "proposal_wrong_kind_rejected",
+      "object": "repair_proposal",
+      "path": ["kind"],
+      "value": "approval_request",
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "proposal_wrong_algorithm_rejected",
+      "object": "repair_proposal",
+      "path": ["proposal_hash_algorithm_id"],
+      "value": "aiops-trusted-repair-proposalhash-v2",
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "proposal_unknown_version_rejected",
+      "object": "repair_proposal",
+      "path": ["schema_version"],
+      "value": "2.0",
+      "error_code": "TRUSTED_REPAIR_UNSUPPORTED_SCHEMA_VERSION"
+    },
+    {
+      "id": "proposal_non_contiguous_sequence_rejected",
+      "object": "repair_proposal",
+      "path": ["initial_commands", 0, "sequence"],
+      "value": 2,
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "proposal_hash_mismatch_rejected",
+      "object": "repair_proposal",
+      "path": ["proposal_hash"],
+      "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "error_code": "TRUSTED_REPAIR_PROPOSAL_HASH_MISMATCH"
+    },
+    {
+      "id": "risk_body_decision_rejected",
+      "object": "risk_decision_request",
+      "path": ["decision"],
+      "value": "grant",
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "callback_unknown_version_rejected",
+      "object": "terminal_callback",
+      "path": ["schema_version"],
+      "value": "9.0",
+      "error_code": "TRUSTED_REPAIR_UNSUPPORTED_SCHEMA_VERSION"
+    },
+    {
+      "id": "control_intent_alias_rejected",
+      "object": "control_intent",
+      "path": ["idempotency_key"],
+      "value": "55555555-5555-4555-8555-555555555555",
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "control_intent_noncanonical_uuid_rejected",
+      "object": "control_intent",
+      "path": ["command_id"],
+      "value": "77777777-7777-4777-8777-77777777777A",
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "control_intent_ttl_too_long_rejected",
+      "object": "control_intent",
+      "path": ["expires_at"],
+      "value": "2026-07-22T08:10:01Z",
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    },
+    {
+      "id": "control_intent_hash_mismatch_rejected",
+      "object": "control_intent",
+      "path": ["intent_hash"],
+      "value": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "error_code": "TRUSTED_REPAIR_IDEMPOTENCY_CONFLICT"
+    },
+    {
+      "id": "control_receipt_prior_alias_rejected",
+      "object": "control_receipt",
+      "path": ["prior_result"],
+      "value": "STOPPED_CONFIRMED",
+      "error_code": "TRUSTED_REPAIR_VALIDATION_FAILED"
+    }
+  ],
+  "state_transitions": [
+    ["PREPARING", "runner_accepted", "DIAGNOSING"],
+    ["PREPARING", "dispatch_failed_definitive", "DISPATCH_FAILED"],
+    ["PREPARING", "dispatch_uncertain", "MANUAL_INTERVENTION"],
+    ["PREPARING", "cancel_confirmed", "CANCELLED"],
+    ["DIAGNOSING", "diagnosis_completed_no_repair", "DIAGNOSIS_ONLY"],
+    ["DIAGNOSING", "diagnosis_failed", "DIAGNOSIS_FAILED"],
+    ["DIAGNOSING", "diagnosis_uncertain", "MANUAL_INTERVENTION"],
+    ["DIAGNOSING", "proposal_created", "PENDING_APPROVAL"],
+    ["DIAGNOSING", "cancel_confirmed", "CANCELLED"],
+    ["DIAGNOSING", "cancel_uncertain", "MANUAL_INTERVENTION"],
+    ["PENDING_APPROVAL", "approval_granted", "EXECUTING"],
+    ["PENDING_APPROVAL", "approval_rejected", "REJECTED"],
+    ["PENDING_APPROVAL", "approval_expired", "EXPIRED"],
+    ["PENDING_APPROVAL", "cancel_confirmed", "CANCELLED"],
+    ["EXECUTING", "execution_succeeded", "SUCCEEDED"],
+    ["EXECUTING", "execution_failed", "FAILED"],
+    ["EXECUTING", "execution_uncertain", "MANUAL_INTERVENTION"],
+    ["EXECUTING", "cancel_confirmed", "CANCELLED"],
+    ["EXECUTING", "cancel_uncertain", "MANUAL_INTERVENTION"],
+    ["EXECUTING", "risk_confirmation_requested", "AWAITING_RISK_CONFIRMATION"],
+    ["AWAITING_RISK_CONFIRMATION", "risk_confirmation_granted", "EXECUTING"],
+    ["AWAITING_RISK_CONFIRMATION", "risk_confirmation_rejected", "REJECTED"],
+    ["AWAITING_RISK_CONFIRMATION", "risk_confirmation_expired", "EXPIRED"],
+    ["AWAITING_RISK_CONFIRMATION", "cancel_confirmed", "CANCELLED"],
+    ["AWAITING_RISK_CONFIRMATION", "execution_uncertain", "MANUAL_INTERVENTION"]
+  ],
+  "invalid_transition": {
+    "from": "DIAGNOSING",
+    "event": "approval_granted",
+    "error_code": "TRUSTED_REPAIR_STATE_TRANSITION_INVALID"
+  },
+  "status_display_zh_cn": {
+    "PREPARING": "准备中",
+    "DIAGNOSING": "诊断中",
+    "DISPATCH_FAILED": "派发失败",
+    "DIAGNOSIS_ONLY": "诊断完成（无需修复）",
+    "DIAGNOSIS_FAILED": "诊断失败",
+    "PENDING_APPROVAL": "待审批",
+    "EXECUTING": "修复执行中",
+    "AWAITING_RISK_CONFIRMATION": "待高风险确认",
+    "SUCCEEDED": "修复成功",
+    "FAILED": "修复失败",
+    "REJECTED": "已驳回",
+    "EXPIRED": "已过期",
+    "CANCELLED": "已取消",
+    "MANUAL_INTERVENTION": "需人工介入"
+  },
+  "event_type_semantics": {
+    "state_transition": "runner_accepted",
+    "runner_acceptance_audit_event": "session_created",
+    "diagnosis_process_audit_event": "diagnosis_started"
+  },
+  "event_ingest_cases": [
+    {
+      "id": "all_new",
+      "last_accepted_sequence": 0,
+      "existing_count": 0,
+      "expected_decision": "new",
+      "expected_new_sequences": [1, 2, 3]
+    },
+    {
+      "id": "all_idempotent",
+      "last_accepted_sequence": 3,
+      "existing_count": 3,
+      "expected_decision": "idempotent",
+      "expected_new_sequences": []
+    },
+    {
+      "id": "replay_prefix_new_suffix",
+      "last_accepted_sequence": 1,
+      "existing_count": 1,
+      "expected_decision": "new",
+      "expected_new_sequences": [2, 3]
+    }
+  ],
+  "event_ingest_conflicts": [
+    {
+      "id": "same_id_different_content",
+      "mode": "id_fingerprint",
+      "error_code": "TRUSTED_REPAIR_EVENT_CONTENT_CONFLICT"
+    },
+    {
+      "id": "occupied_sequence_different_id",
+      "mode": "sequence_occupied",
+      "error_code": "TRUSTED_REPAIR_EVENT_SEQUENCE_CONFLICT"
+    },
+    {
+      "id": "gap_after_history",
+      "mode": "gap",
+      "error_code": "TRUSTED_REPAIR_EVENT_SEQUENCE_CONFLICT"
+    },
+    {
+      "id": "untouched_history_missing_reverse_id",
+      "mode": "history_missing_reverse_id",
+      "error_code": "TRUSTED_REPAIR_EVENT_SEQUENCE_CONFLICT"
+    },
+    {
+      "id": "untouched_history_missing_reverse_sequence",
+      "mode": "history_missing_reverse_sequence",
+      "error_code": "TRUSTED_REPAIR_EVENT_SEQUENCE_CONFLICT"
+    },
+    {
+      "id": "history_does_not_cover_last",
+      "mode": "history_last_mismatch",
+      "error_code": "TRUSTED_REPAIR_EVENT_SEQUENCE_CONFLICT"
+    },
+    {
+      "id": "history_sequence_out_of_range",
+      "mode": "history_sequence_out_of_range",
+      "error_code": "TRUSTED_REPAIR_EVENT_SEQUENCE_CONFLICT"
+    },
+    {
+      "id": "history_boolean_sequence_key",
+      "mode": "history_boolean_sequence_key",
+      "error_code": "TRUSTED_REPAIR_EVENT_SEQUENCE_CONFLICT"
+    }
+  ]
+}

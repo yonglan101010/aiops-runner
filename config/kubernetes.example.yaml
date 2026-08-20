@@ -1,0 +1,14 @@
+clusters:
+  - id: test-cluster
+    display_name: test-cluster
+    environment: test
+    kubeconfig_path: config/keys/test-cluster.kubeconfig
+    context: test-cluster
+    namespace_allowlist: []
+    vmp:
+      region: replace-me
+      workspace_id: replace-me
+    tls:
+      region: replace-me
+      log_topic_id: replace-me
+      event_topic_id: replace-me

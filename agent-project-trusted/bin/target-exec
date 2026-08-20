@@ -1,0 +1,35 @@
+#!/bin/bash
+set -euo pipefail
+
+# The runner supplies these values from its local inventory and SSH connection config.
+# This wrapper intentionally never prints them; Claude only receives command output.
+if [ "$#" -ne 1 ]; then
+  echo 'usage: target-exec <single remote command>' >&2
+  exit 64
+fi
+
+readonly TIMEOUT_BIN=/usr/bin/timeout
+readonly SSH_BIN=/usr/bin/ssh
+if [[ ! -x "$TIMEOUT_BIN" || ! -x "$SSH_BIN" ]]; then
+  echo 'trusted target transport is unavailable' >&2
+  exit 69
+fi
+
+# The public proposal cwd is runner-owned and fixed to "/". Prefixing the
+# opaque command binds the real remote execution to that same audited cwd.
+readonly REMOTE_COMMAND="cd / && $1"
+
+exec "$TIMEOUT_BIN" "$AIOPS_TARGET_COMMAND_TIMEOUT_SEC" \
+  "$SSH_BIN" -F /dev/null -T \
+  -o BatchMode=yes \
+  -o ClearAllForwardings=yes \
+  -o PermitLocalCommand=no \
+  -o "UserKnownHostsFile=$AIOPS_TARGET_KNOWN_HOSTS" \
+  -o GlobalKnownHostsFile=/dev/null \
+  -o UpdateHostKeys=no \
+  -o StrictHostKeyChecking=yes \
+  -o IdentitiesOnly=yes \
+  -i "$AIOPS_TARGET_SSH_KEY" \
+  -p "$AIOPS_TARGET_PORT" \
+  "$AIOPS_TARGET_SSH_USER@$AIOPS_TARGET_ADDRESS" \
+  -- "$REMOTE_COMMAND"

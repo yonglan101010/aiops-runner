@@ -1,0 +1,8 @@
+# Runner SSH 连接公共默认值；向导会把每台主机的实际账号写入本机覆盖文件。
+# 真实 SSH key / known_hosts 只放 Runner 本机，绝不进入 AIOps 或 Git。
+ssh_user: runner
+ssh_key_path: keys/runner_target_ed25519
+known_hosts_path: keys/known_hosts
+strict_host_key_checking: yes
+connect_timeout_sec: 10
+command_timeout_sec: 30
