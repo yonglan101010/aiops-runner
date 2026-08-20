@@ -74,7 +74,10 @@ class BusySessionLockBackend(InjectedLockBackend):
 
 
 class FakeProcess:
-    next_pid = 100
+    # Linux tests need an integer PID for journal assertions, but it must stay
+    # outside the kernel PID range so process-group cancellation cannot collide
+    # with pytest or the GitHub Actions runner.
+    next_pid = 2_000_000_000
 
     def __init__(self, lines, returncode=0, stderr=""):
         self.sent_prompt = None
